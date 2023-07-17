@@ -1,0 +1,10 @@
+.vscode
+*.log
+build
+devel
+*.so
+*.out
+*.pyc
+.catkin_tools/
+*logs/
+**/movielens_20/
