@@ -1,16 +1,14 @@
 ## Dynamic Programming
-
-- Value Iteration
-    1. Initialize $v(s)$ to 0 in all states
-    1. policy evaluation : note we are trying to get the optimal value under the current policy?
-        $$v_{k+1}(s) = max_{A} \sum_{r} \sum_{s'}P[s',r|s,a](r + \gamma v_{*}(s'))$$
-        - repeat until $$v_{k+1}(s)$$ doesn't change much
-    1. policy improvement: $\pi(s)$ is the most rewarding action, like in policy iteration.
-        1. given the current value, each state is $s$ has 
-            $$Q^{\pi_i}(s,a) = R(s,a)+\gamma \sum P(s' | s,a)V(s')$$
-        1. Policy improvement:
-            $$\pi_{i+1} = argmax Q^{\pi_i}(s,a)$$
-        - this is **deterministic**
+- Optimal Value: $v_{*}(s) = max_{A} q_{\pi*}(a,s)$, notice the `*` for optimality
+    - You choose the max value of the next state + reward
+            $$
+            \\
+            =max_{A} \sum_{r} \sum_{s} P[s'r|s,a](r + \gamma v_{*}(s'))
+            $$
+    - Q:
+            $$
+            q_{\pi*}(s) = \sum_{r} \sum_{s'} P(s', r|s, a)(r + \gamma max_{a'} q_{\pi *}(s', a'))
+            $$
 
 - General Policy Iteration
     1. Initialize $v(s)$ to 0 in all states

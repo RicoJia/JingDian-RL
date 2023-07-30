@@ -8,3 +8,5 @@ devel
 .catkin_tools/
 *logs/
 **/movielens_20/
+__pycache__
+*tmp
