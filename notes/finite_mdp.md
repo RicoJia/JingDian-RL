@@ -92,9 +92,10 @@ Once $\pi$ is stable, we don't change anymore. Because subsequent iterations wil
 Will Value Iteration converge? Yes.
 Say we have $V_{k}(s)$ and $V_{j}(s)$, written in vector for all states. Say $B$ is the Bellman Backup Operator. Can prove $|BV_{k}(s) - BV_J(s)| < |V_{k}(s) - V_{j}(s)|$. Say $j= k+1$, we can see the norm of V decreases.
 
-Q and V:?
-$Q = R + \gamma V$
-$V_{\pi}^*(s) = argmax_a Q(s,a) = Q(s, \pi^*(s))$
+### Optimal values 
+$$Q* = max_{\pi} Q_{\pi}(s,a)$$
+$$V*(s) = max_a[R(s,a) + \gamma \sum_s P(s'|s,a)V*(s')] = V^{\pi ^ *}(s) = max_{\pi} V_{\pi}(s)$$
+$$V*(s) = max_a Q^*(s,a) = Q^*(s, \pi^*)$$
 
 
 TODO
