@@ -54,13 +54,38 @@ function policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3)
 
 end
 
+#   P[s][a] == [(probability, nextstate, reward, done), ...]
 function value_iteration(P, nS, nA, gamma=0.9, tol=1e-3)
-	value_function = fill(0.0, nS)
-	policy = fill(0, nS)
-    println("value iteratio")
+	value_function = fill(-100.0, nS)
+    value_function_next = fill(0.0, nS)
+    # julia -> python
+	policy = fill(1, nS)
+    println("value iteration")
 	############################
 	# YOUR IMPLEMENTATION HERE #
-
+    value_function = value_function_next
+    for state in 1:length(value_function)
+        next_action = policy[state]
+        print(P[state][next_action][1])
+        next_transitions = P[state][next_action]
+        for next_transition in next_transitions
+            probability, next_state, reward, done = next_transition
+        end
+        # Python -> Julia
+        next_state += 1
+    # while true
+    #     if abs.(value_function_next .- value_function) .< tol:
+    #         # Converged
+    #         break
+    #     value_function = value_function_next
+    #     for state in 1:length(value_function)
+    #         next_action = policy[state]
+    #         probability, next_state, reward, done = P[state][next_action]
+    #         # Python -> Julia
+    #         next_state += 1
+    #     end
+    # end
+    end
 
 	############################
 	return value_function, policy

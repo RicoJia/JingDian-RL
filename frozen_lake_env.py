@@ -12,8 +12,8 @@ from gym.utils import seeding
 
 def categorical_sample(prob_n, np_random):
     """
-    Sample from categorical distribution
-    Each row specifies class probabilities
+    Sample from categorical distribution Each row specifies class probabilities
+    Returns an index of prob_n (category)
     """
     prob_n = np.asarray(prob_n)
     csprob_n = np.cumsum(prob_n)
@@ -53,6 +53,7 @@ class DiscreteEnv(Env):
         return [seed]
 
     def reset(self):
+        # initialize random initial state in int
         self.s = categorical_sample(self.isd, self.np_random)
         self.lastaction=None
         return self.s
@@ -153,6 +154,7 @@ class FrozenLakeEnv(DiscreteEnv):
                 row = max(row-1,0)
             return (row, col)
 
+        # Adding [probabity, next state, reward, done] to P[state][action]
         for row in range(nrow):
             for col in range(ncol):
                 s = to_s(row, col)
@@ -175,10 +177,14 @@ class FrozenLakeEnv(DiscreteEnv):
                             newstate = to_s(newrow, newcol)
                             newletter = desc[newrow, newcol]
                             done = bytes(newletter) in b'GH'
+                            # if we are not going to goal, reward = 0
                             rew = float(newletter == b'G')
                             li.append((1.0, newstate, rew, done))
 
         super(FrozenLakeEnv, self).__init__(nS, nA, P, isd)
+
+        #TODO Remember to remove
+        print(f'Rico: {self.P}')
 
     def render(self, output_file, mode='human', close=False):
         # This is from the original openAI Gym implementation.
