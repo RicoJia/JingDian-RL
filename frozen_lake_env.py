@@ -4,7 +4,6 @@ import sys
 from six import StringIO, b
 from contextlib import closing
 from gym import utils, Env, spaces
-import discrete_env
 from gym.utils import seeding
 
 ################################################################
@@ -18,7 +17,7 @@ def categorical_sample(prob_n, np_random):
     """
     prob_n = np.asarray(prob_n)
     csprob_n = np.cumsum(prob_n)
-    return (csprob_n > np_random.rand()).argmax()
+    return (csprob_n > np_random.random()).argmax()
 
 
 class DiscreteEnv(Env):
@@ -47,18 +46,19 @@ class DiscreteEnv(Env):
         self.observation_space = spaces.Discrete(self.nS)
 
         self._seed()
-        self._reset()
+        self.reset()
 
     def _seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def _reset(self):
+    def reset(self):
         self.s = categorical_sample(self.isd, self.np_random)
         self.lastaction=None
         return self.s
 
-    def _step(self, a):
+    def step(self, a: int):
+        # a is the index in [0, action_space_length]
         transitions = self.P[self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, d= transitions[i]
@@ -96,7 +96,7 @@ MAPS = {
     ],
 }
 
-class FrozenLakeEnv(discrete_env.DiscreteEnv):
+class FrozenLakeEnv(DiscreteEnv):
     """
     Winter is here. You and your friends were tossing around a frisbee at the park
     when you made a wild throw that left the frisbee out in the middle of the lake.
@@ -195,3 +195,4 @@ class FrozenLakeEnv(discrete_env.DiscreteEnv):
             else:
                 outfile.write("\n")
             outfile.write("\n".join(''.join(line) for line in desc)+"\n")
+
