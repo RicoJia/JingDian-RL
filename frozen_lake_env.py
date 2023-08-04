@@ -26,7 +26,8 @@ class DiscreteEnv(Env):
     Has the following members
     - nS: number of states
     - nA: number of actions
-    - P: transitions (*)
+    - P: transitions (*) 
+    {0 current state: {0 (action): [(0.1, 0, 0.0, False), (0.8, 0, 0.0, False), (0.1, 4, 0.0, False)], 1: []......}
     - isd: initial state distribution (**)
 
     (*) dictionary dict of dicts of lists, where
@@ -60,6 +61,7 @@ class DiscreteEnv(Env):
 
     def step(self, a: int):
         # a is the index in [0, action_space_length]
+        # transitions [(0.1, 0, 0.0, False), (0.8, 0, 0.0, False), (0.1, 4, 0.0, False)]
         transitions = self.P[self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, d= transitions[i]
@@ -179,12 +181,12 @@ class FrozenLakeEnv(DiscreteEnv):
                             done = bytes(newletter) in b'GH'
                             # if we are not going to goal, reward = 0
                             rew = float(newletter == b'G')
+                            if newletter == b'G':
+                                #TODO Remember to remove
+                                print(f'Rico: current state {s}, new state: {newstate}')
                             li.append((1.0, newstate, rew, done))
 
         super(FrozenLakeEnv, self).__init__(nS, nA, P, isd)
-
-        #TODO Remember to remove
-        print(f'Rico: {self.P}')
 
     def render(self, output_file, mode='human', close=False):
         # This is from the original openAI Gym implementation.
