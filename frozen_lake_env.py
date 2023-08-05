@@ -185,15 +185,34 @@ class FrozenLakeEnv(DiscreteEnv):
                                 #TODO Remember to remove
                                 print(f'Rico: current state {s}, new state: {newstate}')
                             li.append((1.0, newstate, rew, done))
-
+# Glossary
+# P: nested dictionary
+# 	From gym.core.Environment
+# 	For each pair of states in [1, nS] and actions in [1, nA], P[state][action] is a
+# 	tuple of the form (probability, nextstate, reward, terminal) where
+# 		- probability: float
+# 			the probability of transitioning from "state" to "nextstate" with "action"
+# 		- nextstate: int
+# 			denotes the state we transition to (in range [0, nS - 1])
+# 		- reward: int
+# 			either 0 or 1, the reward for transitioning from "state" to
+# 			"nextstate" with "action"
+# 		- terminal: bool
+# 		  True when "nextstate" is a terminal state (hole or goal), False otherwise
+# nS: int
+# 	number of states in the environment
+# nA: int
+# 	number of actions in the environment
+# gamma: float
+# 	Discount factor. Number in range [0, 1)
+# Returns: index of action
         super(FrozenLakeEnv, self).__init__(nS, nA, P, isd)
 
     def render(self, output_file, mode='human', close=False):
         # This is from the original openAI Gym implementation.
         if close:
             return
-        with open(output_file, "w") as outfile:
-
+        with open(output_file, "a") as outfile:
             row, col = self.s // self.ncol, self.s % self.ncol
             desc = self.desc.tolist()
             desc = [[c.decode('utf-8') for c in line] for line in desc]

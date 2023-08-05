@@ -36,13 +36,43 @@ Value Function: **at a given current state s, what would be the total expected r
     = \sum_{A} \pi_{A} (a|s) \sum_{r} \sum_{s'}P(s', r|s,a)(r + \gamma v_{\pi}(s'))
     $$
 
+
+### Policy Evaluation
+No matter what policy you have, there's a value function to it. Remember, policy is the probability of each action taken at each state, value function is effectively a table of total accumulated diminishing rewards from a given state, over time.
+
+Say we have finite horizon, following a given policy $\pi$
+$$
+V_{t}(s) = E[\sum_{t=t}^H y_tr_t | s_0] =^{(a)} E[r_0 | s_0] + \sum_{t=t+1}^H E[y_tr_t | s_0]
+\\
+Where
+\\
+E[r_0 | s_0] =^{(b)} R(s_0)
+\\
+ \sum_{t=t+1}^H E[y_tr_t | s_0] =^{(c)}  \sum_{S}P(s'|s_0) \sum_{t=t+1}^H E[y^tr_t|s_0, s'] 
+\\
+where
+\\
+\sum_{t=t+1}^H E[y^tr_t|s_0, s'] = y\sum_{t=t+1}^H E[y^{t-1}r_t|s'] =^{(d)} yV_{t+1}(s')
+\\
+So
+\\
+V_{t}(s) = R(s_0) + y\sum_{s'} P(s'|s)V_{t+1}(s')
+$$
+- $(a)$ is the total expection
+- $(b)$ is the expected reward of current state
+- $(c)$ is you already know which state you are in
+- in $(d)$, we effectively say we start evaluating starting t+1, $V_{t+1}(s)$
+- Note, the terminal values $V_{H}(s)=0$ for all $s$, because we are done!
+
+When $H \rightarrow \infty$, value  becomes V_{0}(s) = R(s_0) + y\sum_{s'} P(s'|s)V_{0}(s'). Because of stationarity in rewards at $t=1$ (reward is independent of time), we can think of $E[y^tr_t|s_0, s']$ as starting from $t=0, s'$, and ends at $H-1=\infty$. So, $V_{0}(s) = R(s_0) + y\sum_{s'} P(s'|s)V_{0}(s')$
+
 ### Policy Iteration
 For simplicity, here we assume we have determinstic policies. and reward is determinstic, given an action pair $(s,a)$
 1. Policy Evaluation only: iterate through all policies, find each policie's value function, then pick one that yields highest value. Then, all you need is updating using bellman backup
     1. Initialize all s: $v(s) = 0$
     2. until convergence **at each state**
         $$
-        v^{\pi}_k(s) = r(s, \pi(s)) + \gamma \sum_{s'} P(s'|s, \pi(s))V^{\pi}_{k-1}(s')
+        V_{t}(s) = R(s_0) + y\sum_{s'} P(s'|s)V_{t+1}(s')
         $$
     3. Then, optimal policy is the one yields the highest value at every state
 
