@@ -1,28 +1,15 @@
 ## Dynamic Programming
-- Optimal Value: $v_{*}(s) = max_{A} q_{\pi*}(a,s)$, notice the `*` for optimality
-    - You choose the max value of the next state + reward
-            $$
-            \\
-            =max_{A} \sum_{r} \sum_{s} P[s'r|s,a](r + \gamma v_{*}(s'))
-            $$
-    - Q:
-            $$
-            q_{\pi*}(s) = \sum_{r} \sum_{s'} P(s', r|s, a)(r + \gamma max_{a'} q_{\pi *}(s', a'))
-            $$
-
 - General Policy Iteration
     1. Initialize $v(s)$ to 0 in all states
     1. Have a an initial policy $\pi (a|s)$
-    1. for a given $\pi(a|s)$, policy evaluation (guess we are "evaluating" the policy by looking at the values?)
+    1. for a given $\pi(a|s)$, policy evaluation 
         1. Do one pass over these states, **note we are just evaluating the value of s, instead of achieving the optimal value**
-            $$v_{k+1}(s) = \sum_{r} \sum_{s'}P[s',r|s,a](r + \gamma v_{*}(s'))$$
             - $k$ is the number of iteration.
         1. we keep sweeping the states, until the value function at each state doesn't chage
     1. Policy improvement (greedy)
         1. get action from the policy
         1. For each state $s$, Find the most rewarding action $a'$, $a' = argmax_{A} \sum_{s'r}P[s',r|s,a](r + \gamma v_{*}(s'))$
         1. if $a != a'$ we need to go back to policy evaluation, with $\pi(s)=a'$
-            - **note: action a could be a set of actions, as long as these actions are equally rewarding**
 
 ## Monte Carlo Methods
 
@@ -226,6 +213,7 @@ $$
 ### Examples and More
 
 - [Grid World](https://towardsdatascience.com/introduction-to-reinforcement-learning-rl-part-3-finite-markov-decision-processes-51e1f8d3ddb7)
+- Inverted Pendulum (Q learning)
 
 - temporal difference learning: to update the value function, we have a small feedback loop with the future value:
   - We first play the game

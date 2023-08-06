@@ -96,14 +96,17 @@ For simplicity, here we assume we have determinstic policies. and reward is dete
                 $$
                 \pi_{i+1}(s) = argmax_a Q^{\pi_i}(a,s)
                 $$
+            - **note: action a could be a set of actions, as long as these actions are equally rewarding**
 
-We can show for a given set of initial values $V(s)$, each iteration its value will only increase (monotonic increase). because you immediately take the optimal policy found in the last step. In this case:
+#### Notes
+- We can show for a given set of initial values $V(s)$, each iteration its value will only increase (monotonic increase). because you immediately take the optimal policy found in the last step. In this case:
     $$
     v{\pi_{i+1}}(s) = max_{A} q_{\pi}(s,a)
     $$
 
 Once $\pi$ is stable, we don't change anymore. Because subsequent iterations will be the same. Also, there are finite number of iterations, because each policy is only visited once.
 
+- General policy iteration (GPI) describes this general framework of the interactions between "policy evaluation" and "policy update".
   
 ### Value Iteration
 1. Initialize $V0(s)=0$ for all states
@@ -127,11 +130,6 @@ $$Q* = max_{\pi} Q_{\pi}(s,a)$$
 $$V*(s) = max_a[R(s,a) + \gamma \sum_s P(s'|s,a)V*(s')] = V^{\pi ^ *}(s) = max_{\pi} V_{\pi}(s)$$
 $$V*(s) = max_a Q^*(s,a) = Q^*(s, \pi^*)$$
 
-
-TODO
-I'm wondering if there's a guarantee that the value function will converge for a given policy $\pi_i$?
-
 ### Assignment
 - Great Question: Quetsion 3 of [slides](https://github.com/tallamjr/stanford-cs234/blob/master/assignments/ass1/assignment1_sol.pdf)
 - Frozen Lake
-- Inverted Pendulum
