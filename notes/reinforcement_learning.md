@@ -1,51 +1,3 @@
-## Dynamic Programming
-- General Policy Iteration
-    1. Initialize $v(s)$ to 0 in all states
-    1. Have a an initial policy $\pi (a|s)$
-    1. for a given $\pi(a|s)$, policy evaluation 
-        1. Do one pass over these states, **note we are just evaluating the value of s, instead of achieving the optimal value**
-            - $k$ is the number of iteration.
-        1. we keep sweeping the states, until the value function at each state doesn't chage
-    1. Policy improvement (greedy)
-        1. get action from the policy
-        1. For each state $s$, Find the most rewarding action $a'$, $a' = argmax_{A} \sum_{s'r}P[s',r|s,a](r + \gamma v_{*}(s'))$
-        1. if $a != a'$ we need to go back to policy evaluation, with $\pi(s)=a'$
-
-## Monte Carlo Methods
-
-- TODO: confirm why it's called tabular methods?
-Many times, we don't know the model of the world $P(s',r|s,a)$. So, for a given $(s,a)$we take average of next state, and rewards
-Say we have the grid world. We want to have
-- $v(s)$, which could be all zeros
-- Returns $s(s)$ for each state, which should be all zeros
-- number of visits at each state $n(s)$ where every entry is zero
-- policy $\pi(s) for each state
-
-At this point, you don't know anything about the grid world. So, you do a bunch of experiments, in episode, **following $\pi$**
-
-In Each episode, you have $s_1, a_1, r_1 ...$ till T. and Total Reward $G=0$. ,
-Then, you go back in time, from time $T$ to $0$: Say now you are at state $s$,
-
-1. $G_t=\gamma G+r_t$,
-1. $n(s)+=1$
-1. $s(s)+=G_t$.
-1. OPTIONAL: if you want to update policy $pi$:
-    1. calculate $v(s) = s(s)/n(s)$, or $q(s,a) = s(s,a)/n(s,a)$
-    1. you need optimal $(s,a, s')$ lookup
-    1. $a_{policy} = \pi(a|s)$, get $s'=lookup(s,a_policy)$ if $v_(s')< v_(s)$, then $\pi(a|s)=a$
-
-Then, you iterate through all episodes.
-When you are done, for each state, you have $v(s) = s(s)/n(s)$
-
-First visit monte carlo vs Every visit monte carlo, [ref](https://ai.stackexchange.com/questions/10812/what-is-the-difference-between-first-visit-monte-carlo-and-every-visit-monte-car)
-
-- In first visit monte carlo, **will skip updating the above steps if your $s$ has already been visited in the same episode**
-- Every time monte carlo will finish the whole process
-
-Of course, you can do the same with $q(s,a)$, for state, action pi. Then, you can do control on that more easily
-
-1. When updating policy, you won't need the $(s,a, s')$.
-1. You still choose your policy greedily.
 
 ### On and Off Policy
 
@@ -113,22 +65,6 @@ target policy to update and return.
 
 ## TD Learning
 
-In Monte Carlo method, we udpate using the final return of nth episode.
-    $$v_{n+1}(s) = v_{n}(s) + \alpha (G_n(s) - v{n}(s))$$
-But in TD Learning, we can simplify this process by updating with the immediate reward, **which is online**
-    $$v_{n+1}(s) = v_{n}(s) + \alpha (r + \gamma v_{n}(s') - v_{n}(s))$$
-One step TD $TD(0)$ is the above:
-
-1. Initialize V(s), have a given policy
-1. Loop for each episode until the terminal condition is reached:
-    1. Take an action given by policy, observe next state $s'$, and its $v(s')$, $r$
-    1. update Value
-        $$v_{n+1}(s) = v_{n}(s) + \alpha (r + \gamma v_{n}(s') - v_{n}(s))$$
-    1. update $s -> s'$
-
-TD Target is $R + \gamma v_{n+1}(s)$, to replace total discounted reward $G_n(s)$. TD error is $R + \gamma v_{n+1}(s) - v_n(s)$
-**it's called bootstraping**, because you learn from another estimate.
-
 1. on and off policy
     - SARSA updates its $Q$ using the actual action taken by $s'$, which corresponds to the behavior policy. So,
         it's **on-policy**
@@ -151,6 +87,7 @@ It's basically the above, just swap them with $Q(s,a)$
     1. update $s -> s'$
 
 ### Q Learning (watkins)
+TD to Q learning: TD has a fixed policy, while Q learning always gets greedy policy
 
 Compared to SARSA, instead of using the policy, We take optimal action when updating Q. But we are still using the policy to find the next action
 
