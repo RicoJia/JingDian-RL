@@ -10,4 +10,7 @@ devel
 **/movielens_20/
 __pycache__
 *tmp
+
+# Extra resource folders
 stanford-cs234
+INF8953DE

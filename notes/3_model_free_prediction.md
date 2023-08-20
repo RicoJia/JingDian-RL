@@ -1,4 +1,4 @@
-# Model Free Prediction (Policy Evaluation)
+# Model Free Prediction
 
 why is it called tabular methods? In a small state space, we can write policy and value as tables. But in a large state space, we might need to approximate the value functions. Those functions may not converge, or converge to the right value
 

@@ -1,14 +1,4 @@
 
-### On and Off Policy
-
-**One problem is you can't gurantee that all states (and maybe actions) are explored**
-So, you can choose to:
-
-1. choose random start states for each episode, following some policy
-2. Have a stochastic policy of action for each state. **Note that in the above example, you don't change policy.**
-    - the policy for selecting actions is called "behavior policy", policy for updating Q function is called "update policy"
-    - on-policy is to keep updating the policy $\pi (a|s)$, i.e., the behavior policy and the update policy are the same
-    - off policy has different behavior and update policies
 
 ### On-policy
 
