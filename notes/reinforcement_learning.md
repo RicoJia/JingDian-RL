@@ -1,29 +1,6 @@
 
 
-### On-policy
 
-on policy, similar to the above mc method. but different in that
-    - we evaluate q(s,a) on the go
-    - update policy **Say we do it first time, with Q(s,a)**
-
-1. Iteration
-    - $q(s,a)$, which could be all zeros
-    - Returns $s(s,a)$ for each state and action, which should be all zeros
-    - number of visits at each state $n(s,a)$ where every entry is zero
-    - policy $\pi$, epsilon-soft
-    At this point, you don't know anything about the grid world. So, you do a bunch of experiments, in episode.
-1. In one episode, you have $s_1, a_1, r_1 ...$ till T. and Total Reward $G=0$. ,
-1. Then, you go back in time, from time $T$ to $0$: Say now you are at state $s$,
-    1. $G_t=\gamma G+r_t$,
-    1. **If $s_t$ has not shown up yet:**
-        1. $n(s,a)+=1$
-        1. $q(s,a)+=G_t/n(s,a)$.
-        1. get set of optimal actions  $A^*=argmax_a Q(s,a)$
-        1. update policy of actions $a$ in $s_t$, $A(s_t)$:
-            - Non-optimal actions $\epsilon / |A(s_t)|$
-            - optimal actions: $1 - \epsilon + \epsilon/|A(s_t)|$
-
-1. When you are done, for each state, you have $q(s,a)$, and policy $\pi(s,a)$
 
 ### Importance Sampling
 
@@ -99,29 +76,7 @@ We update with the expectated Q:
 
 ### Maximization Bias and Double Q Learning
 
-**Q(s'a') is seen as a random variable.**, then in Q Learning, because you always choose action that lead to current $max Q(s', a')$, there's always a difference between
-the $E[max Q(s',a')]$, and the $max EQ(s',a')$. This difference is called bias, and we can show the bias is positive:
 
-1. $max(x)$ is a convex function. For convex function, there's Jensen's inequality, which states:
-    $$E[f(x)] >= f(E[x])$$
-1. So, $bias = E[max Q(s',a')] - max E[Q(s',a')] >= 0$
-1. So, the expectation of the max among Q(s'a') is always larger than the max of the expectation among Q(s'a')
-
-So, there's double Q learning: TODO
-
-[Implementation](https://rubikscode.net/2021/07/20/introduction-to-double-q-learning/): Have two $Q$ tables: $Q1(s,a)$, $Q2(s,a)$.
-For each episode:
-    1. $Q_total =Q_A+Q_B$, find the max action.
-    1. flip a coin. If updating $Q_A$:
-        $$
-        Q_{A,n}(s,a) = Q_{A,n}(s,a) + \alpha[R + \gamma Q_{B,n}(s_{n+1}, a) - Q_{A,n}(s,a)]
-        $$
-        - switch QA, QB if we want to update QB.
-    1. $s_n\rightarrow s_{n+1}$
-
-- TODO:
-  - How does this minimize bias?
-  - why is SARSA online, QLearning offline?
 
 ### N step Bootstrapping
 
