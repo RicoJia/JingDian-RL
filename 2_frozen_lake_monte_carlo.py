@@ -52,7 +52,7 @@ from typing import Tuple, Deque
 import matplotlib.pyplot as plt
 
 TOL = 0.001
-RUNS_NUM = 1
+RUNS_NUM = 10
 EPISODE_NUM = 2000
 total_rewards = np.zeros((RUNS_NUM, EPISODE_NUM))
 
@@ -147,11 +147,13 @@ def first_visit_mc(env):
             # After one episode, update GQ: GQ = G+gamma * GQ[-1]
             # this is a trick we use: append a zero that we don't care
             gamma_rewards_history = deque([0])
+            undiscounted_total_reward = 0
             for transition in episodic_replay_buffer:
                 s, a, r, s_prime = transition
                 gamma_reward = r + GAMMA * gamma_rewards_history[-1]
                 gamma_rewards_history.append(gamma_reward)
                 GQ[s][a] = gamma_reward
+                undiscounted_total_reward += r
             # Update Q: 
             new_Q_function = Q_function + 1/N * (GQ-Q_function)
             Q_function = new_Q_function
@@ -159,7 +161,7 @@ def first_visit_mc(env):
             N += 1
             epsilon *= 0.995
             
-            total_rewards[run_i][episode_i] = gamma_rewards_history[-1]
+            total_rewards[run_i][episode_i] = undiscounted_total_reward
     # Return the last trained Q function
     # print(f'Rico: Q_function: {Q_function}')
     # print(f'Rico: policy: {policy}')
@@ -173,7 +175,7 @@ envs = [
 for env in envs:
     # first visit mc
     Q_function, policy = first_visit_mc(env)
-    render_single(env, policy, "2_frozen_lake_monte_carlo.tmp", 100)
-    # avg_rewards = np.mean(total_rewards, axis=0)
-    # plt.plot(range(EPISODE_NUM), avg_rewards)
-    # plt.show()
+    # render_single(env, policy, "2_frozen_lake_monte_carlo.tmp", 100)
+    avg_rewards = np.mean(total_rewards, axis=0)
+    plt.plot(range(EPISODE_NUM), avg_rewards)
+    plt.show()
