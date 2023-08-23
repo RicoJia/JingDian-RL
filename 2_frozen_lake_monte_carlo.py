@@ -49,7 +49,12 @@ import os
 import time
 from collections import deque, defaultdict
 from typing import Tuple, Deque
+import matplotlib.pyplot as plt
+
 TOL = 0.001
+RUNS_NUM = 1
+EPISODE_NUM = 2000
+total_rewards = np.zeros((RUNS_NUM, EPISODE_NUM))
 
 np.set_printoptions(precision=3)
 def epsilon_greedy_policy(policy, state, nA, epsilon):
@@ -126,38 +131,39 @@ def run_one_episode(env, policy, epsilon, state_output_file:str, max_steps:int=1
 
 
 def first_visit_mc(env):
-    EPISODE_NUM = 2000
-    GAMMA = 0.99
-    policy = np.zeros(env.nS, dtype=int)
-    # 2D array: column is each action, row is each state
-    Q_function = np.zeros((env.nS, env.nA))
-    # history of G value of Q
-    GQ = np.zeros((env.nS, env.nA))
-    N = 1
-    epsilon = 0.6
-    for episode in range(EPISODE_NUM):
-        # This is equivalent to policy evaluation in MDP. We are learning the
-        # value function!
-        episodic_replay_buffer = run_one_episode(env, policy, epsilon, "first_visit_mc.tmp", 100)
-        # After one episode, update GQ: GQ = G+gamma * GQ[-1]
-        # this is a trick we use: append a zero that we don't care
-        gamma_rewards_history = deque([0])
-        for transition in episodic_replay_buffer:
-            s, a, r, s_prime = transition
-            gamma_reward = r + GAMMA * gamma_rewards_history[-1]
-            gamma_rewards_history.append(gamma_reward)
-            GQ[s][a] = gamma_reward
-        # Update Q: 
-        new_Q_function = Q_function + 1/N * (GQ-Q_function)
-        Q_function = new_Q_function
-        policy = np.argmax(Q_function, axis=1)
-        N += 1
-        epsilon *= 0.995
-    #TODO Remember to remove
-    print(f'Rico: Q_function: {Q_function}')
-    print(f'Rico: policy: {policy}')
+    GAMMA = 0.98
+    for run_i in range(RUNS_NUM):
+        policy = np.zeros(env.nS, dtype=int)
+        N = 1
+        # 2D array: column is each action, row is each state
+        Q_function = np.zeros((env.nS, env.nA))
+        # history of G value of Q
+        GQ = np.zeros((env.nS, env.nA))
+        epsilon = 0.6
+        for episode_i in range(EPISODE_NUM):
+            # This is equivalent to policy evaluation in MDP. We are learning the value function!
+            # Also, we use the updated policy immediately
+            episodic_replay_buffer = run_one_episode(env, policy, epsilon, "first_visit_mc.tmp", 100)
+            # After one episode, update GQ: GQ = G+gamma * GQ[-1]
+            # this is a trick we use: append a zero that we don't care
+            gamma_rewards_history = deque([0])
+            for transition in episodic_replay_buffer:
+                s, a, r, s_prime = transition
+                gamma_reward = r + GAMMA * gamma_rewards_history[-1]
+                gamma_rewards_history.append(gamma_reward)
+                GQ[s][a] = gamma_reward
+            # Update Q: 
+            new_Q_function = Q_function + 1/N * (GQ-Q_function)
+            Q_function = new_Q_function
+            policy = np.argmax(Q_function, axis=1)
+            N += 1
+            epsilon *= 0.995
+            
+            total_rewards[run_i][episode_i] = gamma_rewards_history[-1]
+    # Return the last trained Q function
+    # print(f'Rico: Q_function: {Q_function}')
+    # print(f'Rico: policy: {policy}')
     return Q_function, policy
-
 
 envs = [
     FrozenLakeEnv(map_name="4x4", is_slippery=False), 
@@ -165,5 +171,9 @@ envs = [
     # FrozenLakeEnv(map_name="4x4", is_slippery=True)
     ]
 for env in envs:
+    # first visit mc
     Q_function, policy = first_visit_mc(env)
     render_single(env, policy, "2_frozen_lake_monte_carlo.tmp", 100)
+    # avg_rewards = np.mean(total_rewards, axis=0)
+    # plt.plot(range(EPISODE_NUM), avg_rewards)
+    # plt.show()

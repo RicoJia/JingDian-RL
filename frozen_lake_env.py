@@ -185,14 +185,14 @@ class FrozenLakeEnv(DiscreteEnv):
                                 newletter = desc[newrow, newcol]
                                 done = bytes(newletter) in b'GH'
                                 if newletter == b'G':
-                                    rew = 200.0
+                                    rew = 20
                                 elif newletter == b'H':
-                                    rew = -200.0
+                                    rew = -20.0
                                 else:
                                     if s == newstate:
-                                        rew = -5
+                                        rew = -0.5
                                     else:
-                                        rew = -0.1
+                                        rew = -0.01
                                 li.append((0.8 if b==a else 0.1, newstate, rew, done))
                         else:
                             newrow, newcol = inc(row, col, a)
@@ -201,14 +201,14 @@ class FrozenLakeEnv(DiscreteEnv):
                             done = bytes(newletter) in b'GH'
                             # if we are not going to goal, reward = 0
                             if newletter == b'G':
-                                rew = 200.0
+                                rew = 20.0
                             elif newletter == b'H':
-                                rew = -200.0
+                                rew = -20.0
                             else:
                                 if s == newstate:
-                                    rew = -5
+                                    rew = -0.5
                                 else:
-                                    rew = -0.1
+                                    rew = -0.01
                             li.append((1.0, newstate, rew, done))
 # Glossary
 # P: nested dictionary
