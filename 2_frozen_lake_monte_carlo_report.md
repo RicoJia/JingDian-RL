@@ -9,39 +9,8 @@
     - A few things to note:
         - The curve settles at -4. This shows that after 2000 episodes, the algorithm converges. It's negative because of the penalties above.
 3. Visualize an Episode:
-    ```
-    [41mS[0mFFF
-    FHFH
-    FFFH
-    HFFG
-    (Down)
-    SFFF
-    [41mF[0mHFH
-    FFFH
-    HFFG
-    (Down)
-    SFFF
-    FHFH
-    [41mF[0mFFH
-    HFFG
-    (Right)
-    SFFF
-    FHFH
-    F[41mF[0mFH
-    HFFG
-    (Down)
-    SFFF
-    FHFH
-    FFFH
-    H[41mF[0mFG
-    (Right)
-    SFFF
-    FHFH
-    FFFH
-    HF[41mF[0mG
-    (Right)
-    SFFF
-    FHFH
-    FFFH
-    HFF[41mG[0m
-    ```
+
+    <div style="display: flex; justify-content: center;">
+        <img src="https://github.com/RicoJia/JingDian-RL/assets/106101331/2d4412c2-e8f4-48d5-a609-fd0d7300c4e8" alt="image1" width="100"/>
+        <img src="https://github.com/RicoJia/JingDian-RL/assets/106101331/70def7c1-cf3f-4406-b2b2-b7bc6574d503" alt="image2" width="100"/>
+    </div>
