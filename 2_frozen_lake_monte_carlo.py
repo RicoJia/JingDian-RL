@@ -54,9 +54,16 @@ import matplotlib.pyplot as plt
 TOL = 0.001
 RUNS_NUM = 10
 EPISODE_NUM = 2000
+IMPORTANCE_SAMPLING_RUNS_NUM = 10
+GAMMA = 0.98
 total_rewards = np.zeros((RUNS_NUM, EPISODE_NUM))
 
 np.set_printoptions(precision=3)
+
+#####################################################
+# Tool Functions
+#####################################################
+
 def epsilon_greedy_policy(policy, state, nA, epsilon):
     """Generate a randomly distributed number. If it is less than epsilon, return a random action, 
     else return the action with the highest policy value
@@ -129,9 +136,21 @@ def run_one_episode(env, policy, epsilon, state_output_file:str, max_steps:int=1
     env.render(state_output_file)
     return episodic_replay_buffer
 
+def plot_rewards(total_rewards):
+    """Plot rewards
+
+    Args:
+        total_rewards (list-like): 2D array: [run1[episode1 ...], run2[episode1 ...]...]
+    """
+    avg_rewards = np.mean(np.asarray(total_rewards), axis=0)
+    plt.plot(range(EPISODE_NUM), avg_rewards)
+    plt.show()
+
+#####################################################
+# Business Logic
+#####################################################
 
 def first_visit_mc(env):
-    GAMMA = 0.98
     for run_i in range(RUNS_NUM):
         policy = np.zeros(env.nS, dtype=int)
         N = 1
@@ -162,11 +181,66 @@ def first_visit_mc(env):
             epsilon *= 0.995
             
             total_rewards[run_i][episode_i] = undiscounted_total_reward
-    # Return the last trained Q function
-    # print(f'Rico: Q_function: {Q_function}')
-    # print(f'Rico: policy: {policy}')
+    print(f'Q_function: {Q_function}')
+    print(f'policy: {policy}')
     return Q_function, policy
 
+def evaluate_policy_importance_sampling(target_policy, env):
+    # behavior is totally random
+    behavior_epsilon = 1.0
+    behavior_probability = behavior_epsilon/env.nA
+    # Oh man, it's technically zero since we like determinstic policy in real life
+    target_epislon = 0.2
+    print(f'target policy: {target_policy}')
+    V_all = []
+    for run_i in range(IMPORTANCE_SAMPLING_RUNS_NUM):
+        V = np.zeros(env.nS)
+        # values of s1 across EPISODE_NUM
+        V_s1_history = []
+        for episode_i in range(EPISODE_NUM):
+            episodic_replay_buffer = run_one_episode(env, policy, behavior_epsilon, 
+                                                    "first_visit_mc.tmp", 100)
+            episodic_target_G = np.zeros((env.nS, env.nA))
+            G = 0
+            weight = 1
+            for e_pair in episodic_replay_buffer:
+                s, a, r, s_prime = e_pair
+                G = (r + GAMMA * G)
+                target_probability = target_epislon/env.nA +\
+                    (1-target_epislon)*(target_policy[s] == a)
+
+                weight *= (target_probability/behavior_probability)
+                episodic_target_G[s][a] = weight * G
+            # V(s) = mean of weighted G
+            V += np.sum(episodic_target_G, axis=1)
+            V_tmp = V/(episode_i + 1)
+            V_s1_history.append(V_tmp[0])
+        V_all.append(V_s1_history)
+    print(f'V_all after importance sampling: {V_all}')
+    return V_all
+
+def every_visit_mc():
+    """
+    We are using a uniformly distributed random policy
+    """
+    policy = np.zeros(env.nS, dtype=int) 
+    V = np.zeros(env.nS)
+    V_history = np.zeros((EPISODE_NUM, env.nS))
+    # N starts from 1
+    Ns = np.ones(env.nS)
+    for i in range(EPISODE_NUM):
+        G = 0.0
+        # epsilon = 1.0
+        episodic_replay_buffer = run_one_episode(env, policy, 1.0, "first_visit_mc.tmp", 100)
+        for transition in episodic_replay_buffer:
+            s, a, r, s_prime = transition
+            G = r + GAMMA * G
+            # every time we visit s, update with 1/N
+            V[s] = V[s] + G
+        V = V/Ns
+        V_history[i] = V.copy()
+    return V_history
+    
 envs = [
     FrozenLakeEnv(map_name="4x4", is_slippery=False), 
     # FrozenLakeEnv(map_name="8x8", is_slippery=False), 
@@ -174,8 +248,10 @@ envs = [
     ]
 for env in envs:
     # first visit mc
-    Q_function, policy = first_visit_mc(env)
+    # Q_function, policy = first_visit_mc(env)
+    # V_all = evaluate_policy_importance_sampling(policy, env)
+    # plot_rewards(V_all)
     # render_single(env, policy, "2_frozen_lake_monte_carlo.tmp", 100)
-    avg_rewards = np.mean(total_rewards, axis=0)
-    plt.plot(range(EPISODE_NUM), avg_rewards)
-    plt.show()
+
+    # every visit mc
+    every_visit_mc()

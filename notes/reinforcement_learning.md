@@ -1,26 +1,4 @@
 
-
-
-
-### Importance Sampling
-
-If you want to get expectation, variance, etc. from a distribution that's hard to sample from, consider sampling from an easier distribution.
-
-- But you need ratio between the two distributions, at each value.
-
-$$E(X) = \int xP(x)dx = \int x \frac{P(x)}{Q(x)}Q(x)$$
-
-- people usually do $E(f(x)) = \int f(x)p(x)dx$
-
-- However, if $Q(x)$ and $xP(x)$ distribution look too different, then $xP(x)/Q(x)$ is large at every $xP(x)$,
-so $var = E[X^2]-E[X]^2$ will become larger in those regions?
-
-### Importance Sampling
-
-- Need example: <https://towardsdatascience.com/importance-sampling-introduction-e76b2c32e744>
-
-1. TODO: notes are in IPAD
-
 ### Off Policy
 
 Have a behavior policy $b(a_i|s_i)$, and a target policy $\pi (a_i|s_i)$. Use the behavior policy for generating new episodes, but
@@ -82,7 +60,8 @@ We update with the expectated Q:
 
 You basically use actions and updates to update $n$ steps afterwards.
 $$
-G_{t:t+n} = \sum_{m=0}^{m=n-1}[\gamma^{m} * R_{t+m}] + \gamma^(n) v_{k}(s_{t+n})
+G_{t:t+n} = r_1 + yr_2 + y^2r_3... + \gamma^(n) v_{k}(s_{t+n}) = \sum_{m=0}^{m=n-1}[\gamma^{m} * R_{t+m}] + \gamma^{n} v_{k}(s_{t+n})
+\\
 v_{k+1}(s_{n}) = v_{k}(s_{n}) + \alpha (G_{t:t+n} - v_{k}(s_{t+n})
 $$
 

@@ -96,6 +96,7 @@ So, you can choose to:
     2. [Implementation](https://rubikscode.net/2021/07/20/introduction-to-double-q-learning/): Have two $Q$ tables: $Q1(s,a)$, $Q2(s,a)$.
 F 
 
+
 TODO:
 1. Cliff walking (lots of negative rewards)
 1. 

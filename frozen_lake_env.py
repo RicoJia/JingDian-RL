@@ -201,14 +201,14 @@ class FrozenLakeEnv(DiscreteEnv):
                             done = bytes(newletter) in b'GH'
                             # if we are not going to goal, reward = 0
                             if newletter == b'G':
-                                rew = 20.0
+                                rew = 100.0
                             elif newletter == b'H':
-                                rew = -20.0
+                                rew = -100.0
                             else:
-                                if s == newstate:
-                                    rew = -0.5
-                                else:
-                                    rew = -0.01
+                                rew = 0.0
+                                # if s == newstate:
+                                #     rew = -0.5
+                                # rew = -0.01
                             li.append((1.0, newstate, rew, done))
 # Glossary
 # P: nested dictionary
