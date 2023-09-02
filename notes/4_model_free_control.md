@@ -75,6 +75,12 @@ So, you can choose to:
     - doesn't back propagate the learning? So could be slower than MC
  
 ### Maximization Bias
+Eg: 2 fair coins, flip both of them. If you get a head, +1, get a tail, -1. After 1 flip, tell me: 1. which coin is better; 2. Expectation of the coin flip
+1. Say you get head from coin 1. So coin 1 is better; expectation is 1
+2. What's the expected value of the answer to question 2, **given coin1 is the best**? 3 scenarios of getting 1, 1 scenario of getting 0.
+    so 3/4 * 1 - 1/4 * 1 = 0.5. But the real expectation of flipping coin1 is 0.
+3. So that's called maximization bias. To mitigate that, flip coin 1 again. At least that's a realization of the true probability.
+
 **Q(s'a') is seen as a random variable.**, then in Q Learning, because you always choose action that lead to current $max Q(s', a')$, there's always a difference between the $E[max Q(s',a')]$, and the $max EQ(s',a')$. This difference is called bias, and we can show the bias is positive:
 
 1. Math:

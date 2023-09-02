@@ -185,12 +185,12 @@ class FrozenLakeEnv(DiscreteEnv):
                                 newletter = desc[newrow, newcol]
                                 done = bytes(newletter) in b'GH'
                                 if newletter == b'G':
-                                    rew = 20
+                                    rew = 100
                                 elif newletter == b'H':
-                                    rew = -20.0
+                                    rew = -100.0
                                 else:
                                     if s == newstate:
-                                        rew = -0.5
+                                        rew = 0.0
                                     else:
                                         rew = -0.01
                                 li.append((0.8 if b==a else 0.1, newstate, rew, done))

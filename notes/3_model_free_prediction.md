@@ -56,6 +56,7 @@ But in TD Learning, we can simplify this process by updating with the immediate 
     $$v_{n+1}(s) = v_{n}(s) + \alpha (r + \gamma v_{n}(s') - v_{n}(s))$$. **This is really blending Monte Carlo into dynamic programming**, where bootstrapping is the DP part.
 
 **Barto said, TD is the most central and novel to RL**. Intuition: use current esimtate instead of waiting for G at the end of episode
+    - **GAMMA** can be 1 for episodes, but not for TD
 
 ### One step TD $TD(0)$
 
