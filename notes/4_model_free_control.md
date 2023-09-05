@@ -79,6 +79,7 @@ Eg: 2 fair coins, flip both of them. If you get a head, +1, get a tail, -1. Afte
 1. Say you get head from coin 1. So coin 1 is better; expectation is 1
 2. What's the expected value of the answer to question 2, **given coin1 is the best**? 3 scenarios of getting 1, 1 scenario of getting 0.
     so 3/4 * 1 - 1/4 * 1 = 0.5. But the real expectation of flipping coin1 is 0.
+    **A better way to interpret this is**: if you want the expectation of the better coin, don't use the old estimate, because you have 3/4 chance that you got a 1 - so most likely you have a one. This is also **survivorship bias.**
 3. So that's called maximization bias. To mitigate that, flip coin 1 again. At least that's a realization of the true probability.
 
 **Q(s'a') is seen as a random variable.**, then in Q Learning, because you always choose action that lead to current $max Q(s', a')$, there's always a difference between the $E[max Q(s',a')]$, and the $max EQ(s',a')$. This difference is called bias, and we can show the bias is positive:
@@ -94,14 +95,25 @@ Eg: 2 fair coins, flip both of them. If you get a head, +1, get a tail, -1. Afte
     $$
     V_{\pi} = max_a(E(Q(s,a))) \leq E(max_a(Q(s,a))) = V_{\hat{\pi}}(s)
     $$
-    - Same thing applies to Q learning, where we overestimate the value of Q(s,a) by using argmax.
+    - Same thing applies to Q learning, where we 
+        1. first pick the "better action" (like choosing the better coin)
+        2. overestimate the value of Q(s,a) by using argmax.
+
 3. To mitigate the bias of Q, we are using double Q learning
     1. Instead of updating using one single Q function, and taking argmax, we have 2 Q functions:
         1. select $a_t$ based on $\epsilon$ greedy policy: $argmax_a [Q1(s,a)+Q2(s,a)]$
         - with 50% chance, update $Q1(s,a)=Q1(s,a) + \alpha[R + y Q2(s,a) - Q1(s,a)]$
+        1. This way, we don't let the action selected from $\pi$ give us the **survivorship bias**. For updating Q, we ask to flip the coin again, not considering the survived action.
     2. [Implementation](https://rubikscode.net/2021/07/20/introduction-to-double-q-learning/): Have two $Q$ tables: $Q1(s,a)$, $Q2(s,a)$.
-F 
 
+## Bonus: Expected SARSA
+Instead of using a realization of the next $Q(s_{t+1}, a_{t+1})$, we use its exected value: 
+    $$
+    Q(s_t, a_t) = Q(s_t, a_t) + \alpha (r + y \sum_{A} \pi(a|s_{t+1})Q(s_{t+1}, a) - Q(s_t, a_t) )
+    $$
+    - Biased (like Q learning), but should converge
+    - Reduced variance? Because you are considering all actions
+    - Sure, more computation. Computation complexity vs sample efficiency
 
 TODO:
 1. Cliff walking (lots of negative rewards)
